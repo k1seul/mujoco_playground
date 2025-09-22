@@ -149,8 +149,6 @@ dependencies:
       - tensorstore==0.1.76
       - tomlkit==0.13.3
       - toolz==1.0.0
-      - torch==2.5.1+cu121
-      - torchvision==0.20.1+cu121
       - tqdm==4.67.1
       - traitlets==5.14.3
       - treescope==0.1.10
