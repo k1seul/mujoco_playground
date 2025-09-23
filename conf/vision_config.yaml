@@ -1,0 +1,21 @@
+env_name: CartpoleBalance
+headless: true
+checkpoint_path: ./checkpoints/ppo_cartpole_vision
+vision: true
+vision_config:
+  render_batch_size: 512
+  action_repeat: 1
+  ctrl_dt: 0.04
+  episode_length: 75
+ppo:
+  num_timesteps: 1000000
+  num_envs: 512
+  num_eval_envs: 512
+  batch_size: 128
+  unroll_length: 10
+  learning_rate: 3e-4
+  normalize_observations: false
+  reward_scaling: 1.0
+  entropy_cost: 1e-2
+  discounting: 0.99
+  seed: 0

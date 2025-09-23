@@ -1,0 +1,39 @@
+env_name: CartpoleBalance
+headless: true
+checkpoint_path: ./checkpoints/ppo_cartpole_vision
+ppo:
+  num_timesteps: 1000000
+  num_envs: 512
+  num_eval_envs: 512
+  episode_length: 75
+  batch_size: 128
+  unroll_length: 10
+  learning_rate: 0.0003
+  normalize_observations: false
+  reward_scaling: 1.0
+  entropy_cost: 0.01
+  discounting: 0.99
+  seed: 0
+  network_factory:
+    factory: vision
+    encoder_type: vision
+    encoder_kwargs:
+      channels:
+      - 16
+      - 32
+      - 32
+      kernel_sizes:
+      - 8
+      - 4
+      - 3
+      strides:
+      - 4
+      - 2
+      - 1
+      dense_units: 256
+vision: true
+vision_config:
+  render_batch_size: 512
+action_repeat: 1
+ctrl_dt: 0.04
+episode_length: 75

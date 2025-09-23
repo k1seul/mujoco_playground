@@ -17,8 +17,10 @@ from omegaconf import DictConfig, OmegaConf
 import wandb
 
 from mujoco_playground import registry, wrapper
+from mujoco_playground import dm_control_suite
 from mujoco_playground.config import dm_control_suite_params
 from brax.training.agents.ppo import networks as ppo_networks
+from brax.training.agents.ppo import networks_vision as ppo_networks_vision
 from brax.training.agents.ppo import train as ppo
 
 @hydra.main(config_path="conf", config_name="config", version_base=None)
@@ -39,12 +41,47 @@ def main(cfg: DictConfig):
         name=f"{cfg.env_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
     )
 
-    # 환경 및 설정 불러오기
-    env = registry.load(cfg.env_name)
     env_cfg = registry.get_default_config(cfg.env_name)
 
+    # 환경 및 설정 불러오기
+    if cfg.get("vision", False):
+        num_envs = cfg.ppo.num_envs
+        ctrl_dt = cfg.vision_config.ctrl_dt
+        episode_length = int(3 / ctrl_dt)
+
+        config_overrides = {
+            "vision": True,
+            "vision_config.render_batch_size": num_envs,
+            "action_repeat": 1,
+            "ctrl_dt": ctrl_dt,
+            "episode_length": episode_length,
+        }
+
+        env = dm_control_suite.load(cfg.env_name, config_overrides=config_overrides)
+        env = wrapper.wrap_for_brax_training(
+            env,
+            vision=True,
+            num_vision_envs=num_envs,
+            action_repeat=1,
+            episode_length=episode_length,
+        )
+        env_cfg["episode_length"] = episode_length
+    else:
+        env = registry.load(cfg.env_name)
+
+    jit_reset = jax.jit(env.reset)
+    jit_step = jax.jit(env.step)
+
     # PPO 파라미터
-    ppo_params = dm_control_suite_params.brax_ppo_config(cfg.env_name)
+    if cfg.get("vision", False):
+        # Load vision-specific PPO configuration tuned for CartpoleBalance
+        ppo_params = dm_control_suite_params.brax_vision_ppo_config(cfg.env_name)
+        ppo_params.episode_length = episode_length
+        ppo_params.network_factory = ppo_networks_vision.make_ppo_networks_vision
+        ppo_params['batch_size'] = 128
+        ppo_params['num_envs'] = ppo_params['num_eval_envs'] = num_envs
+    else:
+        ppo_params = dm_control_suite_params.brax_ppo_config(cfg.env_name)
     # config.yaml의 ppo 파라미터 덮어쓰기
     if "ppo" in cfg:
         for k, v in cfg.ppo.items():
@@ -79,20 +116,25 @@ def main(cfg: DictConfig):
 
     # 네트워크 및 학습 함수 설정
     ppo_training_params = dict(ppo_params)
-    network_factory = ppo_networks.make_ppo_networks
-    if "network_factory" in ppo_params:
-        del ppo_training_params["network_factory"]
-        network_factory = functools.partial(
-            ppo_networks.make_ppo_networks,
-            **ppo_params.network_factory
+    if cfg.get("vision", False):
+        train_fn = functools.partial(
+            ppo.train, **dict(ppo_params), progress_fn=progress
         )
+    else:
+        network_factory = ppo_networks.make_ppo_networks
+        if "network_factory" in ppo_params:
+            del ppo_training_params["network_factory"]
+            network_factory = functools.partial(
+                ppo_networks.make_ppo_networks,
+                **ppo_params.network_factory
+            )
 
-    train_fn = functools.partial(
-        ppo.train, **ppo_training_params,
-        network_factory=network_factory,
-        progress_fn=progress,
-        save_checkpoint_path=checkpoint_path,
-    )
+        train_fn = functools.partial(
+            ppo.train, **ppo_training_params,
+            network_factory=network_factory,
+            progress_fn=progress,
+            save_checkpoint_path=checkpoint_path,
+        )
 
     # 학습 실행
     make_inference_fn, params, metrics = train_fn(
