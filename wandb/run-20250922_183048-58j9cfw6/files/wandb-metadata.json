@@ -1,0 +1,40 @@
+{
+  "os":  "Linux-6.8.0-52-generic-x86_64-with-glibc2.39",
+  "python":  "CPython 3.11.13",
+  "startedAt":  "2025-09-22T09:30:48.789420Z",
+  "program":  "/home/seul/Desktop/project/mujoco/train_from_state.py",
+  "codePath":  "train_from_state.py",
+  "codePathLocal":  "train_from_state.py",
+  "git":  {
+    "remote":  "git@github.com:k1seul/mujoco_playground.git",
+    "commit":  "6ba725bb8f7c705297e3d4a58e6c4aaebccf37eb"
+  },
+  "email":  "briankan21@gmail.com",
+  "root":  "/home/seul/Desktop/project/mujoco",
+  "host":  "SeulServer",
+  "executable":  "/home/seul/miniconda3/envs/mujoco/bin/python",
+  "cpu_count":  6,
+  "cpu_count_logical":  12,
+  "gpu":  "NVIDIA GeForce RTX 4070",
+  "gpu_count":  1,
+  "disk":  {
+    "/":  {
+      "total":  "1005867986944",
+      "used":  "532620963840"
+    }
+  },
+  "memory":  {
+    "total":  "67297267712"
+  },
+  "gpu_nvidia":  [
+    {
+      "name":  "NVIDIA GeForce RTX 4070",
+      "memoryTotal":  "12878610432",
+      "cudaCores":  5888,
+      "architecture":  "Ada",
+      "uuid":  "GPU-e5125861-99d4-84b6-f7aa-2c977f1d120d"
+    }
+  ],
+  "cudaVersion":  "12.2",
+  "writerId":  "2i6geetvau33716tiwamzb2svh4if88h"
+}
