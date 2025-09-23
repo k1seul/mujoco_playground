@@ -73,3 +73,4 @@ venv.bak/
 # RL ckpt files
 ppo_ckpt/
 wandb/
+output/
