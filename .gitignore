@@ -69,3 +69,6 @@ venv.bak/
 
 # Other
 .DS_Store
+
+# RL ckpt files
+ppo_ckpt/

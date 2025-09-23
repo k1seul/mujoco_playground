@@ -1,0 +1,4 @@
+env_name: CartpoleBalance
+checkpoint_path: ./ppo_ckpt
+ppo:
+  num_timesteps: 1000000

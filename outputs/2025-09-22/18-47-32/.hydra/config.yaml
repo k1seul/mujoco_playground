@@ -1,0 +1,4 @@
+env_name: CartpoleBalance
+checkpoint_path: ./ppo_ckpt
+headless: true
+ppo: null
