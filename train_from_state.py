@@ -1,8 +1,8 @@
 import os
 os.environ["MUJOCO_GL"] = "egl"
+# Reduce madrona memory allocation to 1GB as cartpole doesn't need much
+os.environ["MADRONA_MWGPU_DEVICE_HEAP_SIZE"] = "1073741824"
 import mujoco_playground
-
-
 import functools
 from datetime import datetime
 from IPython.display import clear_output

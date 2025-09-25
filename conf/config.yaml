@@ -1,7 +1,7 @@
 # 기본 Hydra config 예시
 # 환경 이름, 체크포인트 경로, PPO 파라미터 등 관리
 
-env_name: CartpoleBalance
+env_name: CheetahRun
 checkpoint_path: ./ppo_ckpt
 headless: true  # headless 환경에서 실행 시 true, GUI 필요시 false
 ppo:

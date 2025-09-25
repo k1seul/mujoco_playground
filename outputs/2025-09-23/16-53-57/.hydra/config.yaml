@@ -1,0 +1,5 @@
+env_name: CheetahRun
+checkpoint_path: ./ppo_ckpt
+headless: true
+ppo:
+  num_timesteps: 60000000

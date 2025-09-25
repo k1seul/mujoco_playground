@@ -35,7 +35,7 @@ np.set_printoptions(precision=3, suppress=True, linewidth=100)
 from mujoco_playground import dm_control_suite
 
 
-num_envs = 16
+num_envs = 1
 ctrl_dt = 0.04
 episode_length = int(3 / ctrl_dt)
 
